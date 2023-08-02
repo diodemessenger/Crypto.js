@@ -5,7 +5,7 @@
 
 ### Public-secret key cryptography
 
-**McEliece**
+**Post-Quantum McEliece**
 
 ```javascript
 DiodeCrypto.gen_mceliece460896f().then((keys) => {
