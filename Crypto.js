@@ -1,3 +1,7 @@
+// TODO:
+
+// - Move console log and fix comments
+
 function DiodeCrypto(){
     var crypto = this;
 
@@ -7,12 +11,15 @@ function DiodeCrypto(){
     window.dcrypto = this;
 
     crypto.ready = (module) => {
-        // the module has been loaded
         crypto.Module = module;
         crypto.isReady = true;
-        console.log("Cryptography interface has been loaded")
+        console.log("DiodeCrypto has been loaded")
     }
 
+    const base64ToUInt8Array = b64 => Uint8Array.from(window.atob(b64), c => c.charCodeAt(0));
+    const textToUInt8Array = s => new TextEncoder().encode(s);
+    const UInt8ArrayToString = u8 => String.fromCharCode.apply(null, u8);
+    const UInt8ArrayToBase64 = u8 => window.btoa(UInt8ArrayToString(u8));
 
     crypto.gen_mceliece460896f = () => {
         return new Promise(function (resolve, reject) {
@@ -435,6 +442,73 @@ function DiodeCrypto(){
             resolve({
                 verified: (rs == 1)
             })
+        });
+    }
+
+    crypto.encrypt_aes_ctr = (message, key) => {
+        return new Promise(function (resolve, reject) {
+            if(!crypto.isReady){
+                reject('Crypto function called before library loaded.')
+            }
+
+            (async function () {
+
+                // the IV should change every time a message is encrypted
+                
+                let iv = window.crypto.getRandomValues(new Uint8Array(16));
+
+                const key_encoded = await window.crypto.subtle.importKey("raw", base64ToUInt8Array(key), { name: "AES-CTR" }, false, ["encrypt"]);
+
+                const ciphertext = new Uint8Array(await window.crypto.subtle.encrypt(
+                    { name: "AES-CTR", counter: iv, length: 128 },
+                    key_encoded,
+                    textToUInt8Array(JSON.stringify(message)),
+                ));
+
+                // n_ct format: nonce . cipher text
+
+                resolve({
+                    n_ct: UInt8ArrayToBase64(iv) + "." + UInt8ArrayToBase64(ciphertext)
+                })
+
+            })();
+        });
+    }
+
+    crypto.decrypt_aes_ctr = (n_ct, key) => {
+        return new Promise(function (resolve, reject) {
+            if(!crypto.isReady){
+                reject('Crypto function called before library loaded.')
+            }
+
+            (async function () {
+
+                // n_ct format: nonce . cipher text
+
+                const nonce = n_ct.split(".")[0]
+                const ciphertext = n_ct.split(".")[1]
+
+                const key_encoded = await window.crypto.subtle.importKey("raw", base64ToUInt8Array(key), { name: "AES-CTR" }, false, ["decrypt"]);
+
+                const plaintext = UInt8ArrayToString(
+                    new Uint8Array(
+                      await window.crypto.subtle.decrypt(
+                        {
+                          name: "AES-CTR",
+                          counter: base64ToUInt8Array(nonce),
+                          length: 128
+                        },
+                        key_encoded,
+                        base64ToUInt8Array(ciphertext)
+                      )
+                    )
+                );
+                
+                resolve({
+                    text: plaintext
+                })
+
+            })();
         });
     }
 
