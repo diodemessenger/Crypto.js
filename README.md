@@ -13,9 +13,11 @@ This code requires HTTPS, along with the following headers to be present to the 
     Cross-Origin-Opener-Policy: same-origin
 ```
 
-## Examples
+# Examples
 
-### McEliece
+### Public-secret key cryptography
+
+**McEliece**
 
 ```javascript
 DiodeCrypto.gen_mceliece460896f().then((keys) => {
@@ -38,7 +40,7 @@ DiodeCrypto.gen_mceliece460896f().then((keys) => {
 })
 ```
 
-### RSA
+**RSA**
 
 ```javascript
 DiodeCrypto.gen_rsa().then((keys) => {
@@ -60,7 +62,10 @@ DiodeCrypto.gen_rsa().then((keys) => {
 });
 ```
 
-### ED25519
+
+### Message Signing
+
+**ED25519**
 
 ```javascript
 DiodeCrypto.gen_ed25519().then((keys) => {
@@ -80,4 +85,8 @@ DiodeCrypto.gen_ed25519().then((keys) => {
     })
 });
 ```
+
+### Symmetric Encryption
+
+**AES**
 
