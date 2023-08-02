@@ -60,3 +60,24 @@ DiodeCrypto.gen_rsa().then((keys) => {
 });
 ```
 
+### ED25519
+
+```javascript
+DiodeCrypto.gen_ed25519().then((keys) => {
+
+    var public_key = keys.pub;
+    var private_key = keys.priv;
+
+    DiodeCrypto.sign_ed25519("Hello World!", keys.priv).then((out) => {
+
+        var signature = out.sig
+
+        DiodeCrypto.verify_ed25519(signature, keys.pub, "Hello World!").then((out) => {
+
+            var isVerified = out.verified;
+
+        })
+    })
+});
+```
+
