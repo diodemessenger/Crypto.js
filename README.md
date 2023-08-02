@@ -90,3 +90,15 @@ DiodeCrypto.gen_ed25519().then((keys) => {
 
 **AES**
 
+```javascript
+DiodeCrypto.encrypt_aes_ctr("Hello", "HT24EFLxzRYATTG4PwMstxuIc6cnfnr4VjIeSJc9SMQ=").then((out) => {
+
+    var encrypted = out.n_ct;
+
+    DiodeCrypto.decrypt_aes_ctr(encrypted, "HT24EFLxzRYATTG4PwMstxuIc6cnfnr4VjIeSJc9SMQ=").then((out) => {
+
+        var plainttext = out.text;
+
+    })
+})
+```
