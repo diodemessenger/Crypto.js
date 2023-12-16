@@ -1,3 +1,5 @@
+**All C code compiled via NIST by Rodrigo Amaral using emscriptem**
+
 - A wrapper around Rodrigo's code to allow functionality for (QKEM) **McElice**, (KEM) **RSA**, (SIG) **ED25519**
 - Using built in web features, functionality for (ENC) **AES-CTR**
 
